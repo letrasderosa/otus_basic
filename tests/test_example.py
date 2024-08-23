@@ -11,5 +11,4 @@ def test_google_title(browser, test_word):
     assert test_word in browser.title
 
 
-# pytest -v --browser=chrome test_example.py
-# pytest -v --browser=firefox --alluredir=allure-results tests\test_example.py
+# pytest -v --browser=firefox  tests\test_example.py

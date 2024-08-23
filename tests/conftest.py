@@ -1,6 +1,7 @@
 from selenium import webdriver
 import pytest
 
+
 def pytest_addoption(parser):
     parser.addoption("--browser",
                      type=str,
@@ -14,10 +15,14 @@ def pytest_addoption(parser):
 def browser(request):
     browser_name = request.config.getoption("--browser")
     if browser_name == "chrome":
-        browser = webdriver.Chrome()
+        driver = webdriver.Chrome()
     elif browser_name == "firefox":
-        browser = webdriver.Firefox()
+        driver = webdriver.Firefox()
     else:
         raise ValueError("Unsupported browser")
-    yield browser
-    browser.quit()
+    yield driver
+    driver.quit()
+
+
+
+
