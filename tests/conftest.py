@@ -1,25 +1,46 @@
 from selenium import webdriver
+from selenium.webdriver.chrome.options import Options as Chrome_options
+from selenium.webdriver.firefox.options import Options as Firefox_options
+from selenium.webdriver.firefox.firefox_profile import FirefoxProfile
 import pytest
 
 
 def pytest_addoption(parser):
-    parser.addoption("--browser",
-                     type=str,
-                     help="my option:type1 or type2",
-                     default="chrome")
+    parser.addoption("--language", action="store", default="en")
+    parser.addoption("--browser", action="store", default="chrome")
 
 
-# чтобы выбирать браузер в запросе, используем встроенную фикстуру request,
-# и ей передаем значение browser_name
-@pytest.fixture()
-def browser(request):
-    browser_name = request.config.getoption("--browser")
-    if browser_name == "chrome":
-        driver = webdriver.Chrome()
-    elif browser_name == "firefox":
-        driver = webdriver.Firefox()
+@pytest.fixture(scope="function")
+def language(request):
+    """Определяем возможность выбора языка"""
+    lang =  request.config.getoption("--language")
+    if lang in ["en", "fr", "de", "es", "ru", "it"]:
+        return lang
     else:
-        raise ValueError("Unsupported browser")
+        raise ValueError("Invalid language")
+
+
+@pytest.fixture(scope="function")
+def browser(request, language):
+    """Определяем возможность выбора браузера"""
+    if request.config.getoption("--browser") == "chrome":
+        options = Chrome_options()
+        options.add_experimental_option(
+            'prefs', {'intl.accept_languages': language})
+        # options.add_argument('lang=' + language) # можно так
+        driver= webdriver.Chrome(options=options)
+
+    elif request.config.getoption("--browser") == "firefox":
+        profile = FirefoxProfile()
+        profile.set_preference('intl.accept_languages', language)
+        options = Firefox_options()
+
+        options.profile = profile
+        driver= webdriver.Firefox(options=options)
+
+    else:
+        raise ValueError("Invalid browser")
+
     yield driver
     driver.quit()
 
