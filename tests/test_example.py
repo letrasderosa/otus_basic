@@ -48,7 +48,7 @@ def test_guest_can_go_to_login_page(browser):
     time.sleep(4)
 
 
-# tests:23:45
+
 
 # pytest -v --browser=firefox  tests\test_example.py
 # pytest -v  --language=en --browser=firefox  tests\test_example.py
